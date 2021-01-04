@@ -32,6 +32,7 @@ class NoteListState extends State<NoteList> {
                       child: _NoteCard(notes[index]["title"], notes[index]["text"])
                   );
                 },
+                itemCount: notes.length,
               );
             } else {
               return Center(child: CircularProgressIndicator());

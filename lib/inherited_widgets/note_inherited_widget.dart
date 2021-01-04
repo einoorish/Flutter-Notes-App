@@ -2,20 +2,7 @@ import 'package:flutter/material.dart';
 
 class NoteInheritedWidget extends InheritedWidget{
 
-  final notes = [
-    {
-      "title" : "Title1",
-      "text" : "Text1"
-    },
-    {
-      "title" : "Title2",
-      "text" : "Text2"
-    },
-    {
-      "title" : "Title3",
-      "text" : "Text3"
-    },
-  ];
+  final notes = [];
 
   NoteInheritedWidget(Widget child) : super(child:child);
 

@@ -21,10 +21,7 @@ class _NoteState extends State<Note> {
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _textController = TextEditingController();
-  String title = "Title", text = "Description";
-
-  List<Map<String, String>> get _notes => NoteInheritedWidget.of(context).notes;
-
+  String title = "Title", text = "Text";
 
   @override
   void didChangeDependencies() {
