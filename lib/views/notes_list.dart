@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes_sqlite/inherited_widgets/note_inherited_widget.dart';
+import 'package:notes_sqlite/providers/note_provider.dart';
 
 import 'note.dart';
 
@@ -10,30 +11,38 @@ class NoteList extends StatefulWidget{
 
 class NoteListState extends State<NoteList> {
 
-  List<Map<String, String>> get _notes => NoteInheritedWidget.of(context).notes;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text("Notes")),
-        body: ListView.builder(
-          itemBuilder: (context, index){
-            return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Note(NoteMode.Edit, index))
+        body: FutureBuilder(
+          future: NoteProvider.getNoteList(),
+          builder: (context, snapshot) {
+            if(snapshot.connectionState == ConnectionState.done){
+              var notes = snapshot.data;
+              return ListView.builder(
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Note(NoteMode.Edit, notes[index]))
+                        );
+                      },
+                      child: _NoteCard(notes[index]["title"], notes[index]["text"])
                   );
                 },
-              child: _NoteCard(_notes[index]["title"],_notes[index]["text"])
-            );
-          },
-        ),
+              );
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          }
+         ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Note(NoteMode.Add, -1))
+            MaterialPageRoute(builder: (context) => Note(NoteMode.Add, null))
           );
         },
         child: Icon(Icons.add),

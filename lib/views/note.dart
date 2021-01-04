@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:notes_sqlite/inherited_widgets/note_inherited_widget.dart';
+import 'package:notes_sqlite/providers/note_provider.dart';
 
 enum NoteMode { Edit, Add }
 
 class Note extends StatefulWidget{
 
   final NoteMode noteMode;
-  final int index;
+  final Map<String, dynamic> note;
 
-  Note(this.noteMode, this.index);
+  Note(this.noteMode, this.note);
 
   @override
   State<StatefulWidget> createState() {
@@ -29,8 +30,8 @@ class _NoteState extends State<Note> {
   void didChangeDependencies() {
     //must use inherited widget only after init state finished
     if(widget.noteMode == NoteMode.Edit){
-      _titleController.text = _notes[widget.index]["title"];
-      _textController.text = _notes[widget.index]["text"];
+      _titleController.text = widget.note["title"];
+      _textController.text = widget.note["text"];
     }
     super.didChangeDependencies();
   }
@@ -55,19 +56,18 @@ class _NoteState extends State<Note> {
                   _Button("Save", Colors.blue, (){
                     final title = _titleController.text;
                     final text = _textController.text;
-
                     if(widget?.noteMode == NoteMode.Add){
-                      _notes.add({"title":title, "text": text});
+                      NoteProvider.insertNote({"title":title, "text": text});
                     } else {
-                      _notes[widget.index] = {"title":title, "text": text};
+                      NoteProvider.updateNote({"title":title, "text": text});
                     }
 
                     Navigator.pop(context);
                   }),
                   _Button("Discard", Colors.grey, (){Navigator.pop(context);}),
                   widget?.noteMode == NoteMode.Edit ?
-                  _Button("Delete", Colors.red, (){
-                    _notes.removeAt(widget.index);
+                  _Button("Delete", Colors.red, () async {
+                    await NoteProvider.deleteNote(widget.note["id"]);
                   })
                       : Container()
                 ],
